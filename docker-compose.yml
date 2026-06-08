@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+
+  # ─── MongoDB Database ───────────────────────────────────────────
+  mongo:
+    image: mongo:7
+    container_name: urlshortener-mongo
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db        # Persist data even if container restarts
+    networks:
+      - app-network
+
+  # ─── Express Backend ────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: urlshortener-backend
+    restart: unless-stopped
+    environment:
+      PORT: 5000
+      MONGO_URI: mongodb://mongo:27017/urlshortener
+      JWT_SECRET: your_super_secret_jwt_key_change_this_in_production
+      BASE_URL: http://localhost
+    depends_on:
+      - mongo                      # Wait for mongo to start first
+    networks:
+      - app-network
+
+  # ─── Nginx + Frontend ───────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: urlshortener-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"                    # Expose to your machine on port 80
+    depends_on:
+      - backend                    # Wait for backend to start first
+    networks:
+      - app-network
+
+
+# ─── Shared Network ─────────────────────────────────────────────
+networks:
+  app-network:
+    driver: bridge
+
+# ─── Persistent Volume for MongoDB ──────────────────────────────
+volumes:
+  mongo-data:

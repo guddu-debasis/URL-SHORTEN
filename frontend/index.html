@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Short.ly — URL Shortener</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="brand">⚡ Short.ly</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <span id="nav-auth">
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
+      </span>
+      <button id="logout-btn" style="display:none" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <h1>Shorten. Share. Track.</h1>
+    <p>Create short, powerful links in seconds. Track every click with real-time analytics.</p>
+
+    <div class="shorten-box">
+      <input type="url" id="long-url" placeholder="Paste your long URL here..." />
+      <input type="text" id="custom-alias" placeholder="Custom alias (optional)" />
+      <select id="expiry">
+        <option value="">No Expiry</option>
+        <option value="1d">1 Day</option>
+        <option value="7d">7 Days</option>
+      </select>
+      <button onclick="shortenUrl()">Shorten URL</button>
+    </div>
+
+    <!-- RESULT BOX -->
+    <div class="result-box" id="result-box" style="display:none">
+      <p>Your short URL:</p>
+      <a id="short-link" href="#" target="_blank"></a>
+      <button onclick="copyUrl()">Copy</button>
+      <br/>
+      <img id="qr-img" src="" alt="QR Code" style="margin-top:16px; width:160px;" />
+    </div>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>

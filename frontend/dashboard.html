@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — Short.ly</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="brand">⚡ Short.ly</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <button id="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <section class="dashboard">
+    <h2>My Links</h2>
+    <p id="dash-status"></p>
+    <table id="url-table" style="display:none">
+      <thead>
+        <tr>
+          <th>Short URL</th>
+          <th>Original URL</th>
+          <th>Clicks</th>
+          <th>Expires</th>
+          <th>QR</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="url-tbody"></tbody>
+    </table>
+  </section>
+
+  <script src="app.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

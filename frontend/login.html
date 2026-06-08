@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login — Short.ly</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="brand">⚡ Short.ly</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="register.html">Register</a>
+    </div>
+  </nav>
+
+  <section class="auth-section">
+    <div class="auth-box">
+      <h2>Login</h2>
+      <input type="email" id="email" placeholder="Email"/>
+      <input type="password" id="password" placeholder="Password"/>
+      <button onclick="login()">Login</button>
+      <p id="auth-msg" class="msg"></p>
+      <p>Don't have an account? <a href="register.html">Register</a></p>
+    </div>
+  </section>
+
+  <script src="app.js"></script>
+  <script src="auth.js"></script>
+</body>
+</html>
