@@ -8,7 +8,7 @@ services:
     container_name: urlshortener-mongo
     restart: unless-stopped
     volumes:
-      - mongo-data:/data/db        # Persist data even if container restarts
+      - mongo-data:/data/db
     networks:
       - app-network
 
@@ -25,9 +25,12 @@ services:
       JWT_SECRET: your_super_secret_jwt_key_change_this_in_production
       BASE_URL: http://localhost
     depends_on:
-      - mongo                      # Wait for mongo to start first
+      - mongo
     networks:
       - app-network
+    labels:
+      logging: "promtail"
+      logging_jobname: "urlshortener-backend"
 
   # ─── Nginx + Frontend ───────────────────────────────────────────
   frontend:
@@ -37,9 +40,77 @@ services:
     container_name: urlshortener-frontend
     restart: unless-stopped
     ports:
-      - "80:80"                    # Expose to your machine on port 80
+      - "80:80"
     depends_on:
-      - backend                    # Wait for backend to start first
+      - backend
+    networks:
+      - app-network
+
+  # ─── Prometheus ─────────────────────────────────────────────────
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: urlshortener-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"              # Prometheus UI: http://localhost:9090
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    networks:
+      - app-network
+
+  # ─── Grafana ────────────────────────────────────────────────────
+  grafana:
+    image: grafana/grafana:latest
+    container_name: urlshortener-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"              # Grafana UI: http://localhost:3000
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin123
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      - prometheus
+      - loki
+    networks:
+      - app-network
+
+  # ─── Loki (Log Aggregation) ─────────────────────────────────────
+  loki:
+    image: grafana/loki:latest
+    container_name: urlshortener-loki
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./monitoring/loki-config.yml:/etc/loki/local-config.yaml:ro
+      - loki-data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - app-network
+
+  # ─── Promtail (Log Shipper: Docker → Loki) ──────────────────────
+  promtail:
+    image: grafana/promtail:latest
+    container_name: urlshortener-promtail
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/promtail-config.yml:/etc/promtail/config.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
     networks:
       - app-network
 
@@ -49,6 +120,9 @@ networks:
   app-network:
     driver: bridge
 
-# ─── Persistent Volume for MongoDB ──────────────────────────────
+# ─── Persistent Volumes ─────────────────────────────────────────
 volumes:
   mongo-data:
+  prometheus-data:
+  grafana-data:
+  loki-data:

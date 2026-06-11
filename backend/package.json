@@ -15,8 +15,10 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.3.1",
     "nanoid": "^3.3.6",
+    "prom-client": "^15.1.0",
     "qrcode": "^1.5.3",
-    "ua-parser-js": "^1.0.35"
+    "ua-parser-js": "^1.0.35",
+    "winston": "^3.11.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

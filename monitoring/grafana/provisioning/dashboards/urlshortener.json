@@ -1,0 +1,98 @@
+{
+  "title": "URL Shortener Overview",
+  "uid": "urlshortener-overview",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "10s",
+  "time": { "from": "now-1h", "to": "now" },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Total URLs Shortened",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "urlshortener_urls_shortened_total",
+        "legendFormat": "Total"
+      }]
+    },
+    {
+      "id": 2,
+      "title": "Total Redirects",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "sum(urlshortener_redirects_total)",
+        "legendFormat": "Redirects"
+      }]
+    },
+    {
+      "id": 3,
+      "title": "Failed Redirects",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "sum(urlshortener_redirect_failures_total)",
+        "legendFormat": "Failures"
+      }]
+    },
+    {
+      "id": 4,
+      "title": "Auth Events (Register vs Login)",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "sum(urlshortener_auth_events_total) by (type)",
+        "legendFormat": "{{type}}"
+      }]
+    },
+    {
+      "id": 5,
+      "title": "HTTP Request Rate (req/s)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "sum(rate(urlshortener_http_request_duration_seconds_count[1m])) by (route, method)",
+        "legendFormat": "{{method}} {{route}}"
+      }]
+    },
+    {
+      "id": 6,
+      "title": "HTTP P95 Latency (seconds)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "histogram_quantile(0.95, sum(rate(urlshortener_http_request_duration_seconds_bucket[1m])) by (le, route))",
+        "legendFormat": "p95 {{route}}"
+      }]
+    },
+    {
+      "id": 7,
+      "title": "Node.js Heap Used (bytes)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "targets": [{
+        "datasource": "Prometheus",
+        "expr": "urlshortener_nodejs_heap_size_used_bytes",
+        "legendFormat": "Heap Used"
+      }]
+    },
+    {
+      "id": 8,
+      "title": "Backend Logs (Loki)",
+      "type": "logs",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "targets": [{
+        "datasource": "Loki",
+        "expr": "{job=\"urlshortener-backend\"}",
+        "legendFormat": ""
+      }]
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml   # Tracks where Promtail left off reading
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push   # Send logs to Loki container
+
+scrape_configs:
+
+  # ─── Scrape Docker container logs ───────────────────────────────
+  - job_name: docker-containers
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 5s
+        filters:
+          - name: label
+            values: ["logging=promtail"]   # Only scrape containers with this label
+
+    relabel_configs:
+      # Use the container name as the "container" label
+      - source_labels: ['__meta_docker_container_name']
+        regex: '/(.*)'
+        target_label: 'container'
+
+      # Use our custom logging_jobname label as the "job" label
+      - source_labels: ['__meta_docker_container_label_logging_jobname']
+        target_label: 'job'
+
+      # Also capture the Docker image name
+      - source_labels: ['__meta_docker_container_image']
+        target_label: 'image'

@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: 'URL Shortener Dashboards'
+    orgId: 1
+    folder: 'URL Shortener'
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/dashboards
