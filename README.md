@@ -1,4 +1,4 @@
-# ⚡ Short.ly — URL Shortener
+# ⚡ Short.ly (URL Shortener)
 
 A full-stack URL shortening application with user authentication, click analytics, QR code generation, link expiry, and a complete observability stack (Prometheus + Grafana + Loki + Promtail). Everything runs in Docker via a single `docker-compose up` command.
 
